@@ -266,9 +266,9 @@ exports.changePassword = async (req, res) => {
       message: "Password changed successfully",
     });
   } catch (error) {
-    res.status(500).json({
+   return res.status(500).json({
       success: false,
-      message: "change password failed",
+      message: "Internal server error",
       error: error.message,
     });
   }
