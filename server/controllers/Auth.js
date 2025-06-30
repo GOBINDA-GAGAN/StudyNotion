@@ -217,20 +217,54 @@ exports.login = async (req, res) => {
 };
 
 //changePassword
-exports.changePassword = async () => {
+exports.changePassword = async (req, res) => {
   try {
-    const { oldPassword,newPassword, confirmPassword } = req.body;
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+    const { email } = req.user;
+
     if (!newPassword || !confirmPassword) {
-      res.status(401).json({
+      return res.status(401).json({
         success: false,
-        message: "All failed Require",
+        message: "All fields are required",
       });
     }
 
-    ActiveXObjectcnm,.
-    
+    const user = await User.findOne({ email });
 
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
 
+    const isPasswordCorrect = await bcrypt.compare(oldPassword, user.password);
+
+    if (!isPasswordCorrect) {
+      return res.status(400).json({
+        status: "false",
+        message: "please enter your correct old password",
+      });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(402).json({
+        status: "false",
+        message: "Passwords do not match",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    const passwordUpdated = await User.updateOne(
+      { _id: user._id },
+      { password: hashedPassword }
+    );
+
+    res.status(200).json({
+      status: true,
+      message: "Password changed successfully",
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
