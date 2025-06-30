@@ -47,3 +47,52 @@ exports.resetPasswordToken = async (req, res) => {
 };
 
 //resetPassword
+exports.resetPassword = async (req, res) => {
+  try {
+    const { password, confirmPassword, token } = req.body;
+    con;
+
+    if (!password || !confirmPassword) {
+      return res.status(401).json({
+        success: false,
+        message: "password not matching",
+      });
+    }
+
+    const userDetails = await User.findOne({ token: token });
+
+    if (!userDetails) {
+      return res.status(404).json({
+        success: false,
+        message: "token invalid",
+      });
+    }
+
+    if (userDetails.resetPasswordExpires < Date.now()) {
+      return res.status().json({
+        status: false,
+        message: "Token expired",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const passwordUpdated = await User.updateOneAndUpdate(
+      { token: token },
+      { password: hashedPassword },
+      { new: true }
+    );
+
+    res.status(200).json({
+      status: true,
+      message: "Password reset successfully",
+      passwordUpdated,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
