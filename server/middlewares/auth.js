@@ -79,7 +79,6 @@ exports.isInstructor = async (req, res, next) => {
 };
 
 //isAdmin
-
 exports.isAdmin= async (req, res, next) => {
   try {
   if(req.user.accountType!=="Admin"){
