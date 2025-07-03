@@ -3,6 +3,7 @@ const User = require("../models/User");
 const Tag = require("../models/tags");
 const uploadImageToCloudinary = require("../utils/imageUploader");
 
+//Add course
 exports.createCourse = async (req, res) => {
   try {
     const { courseName, courseDescription, whatYouWillLearn, price, tag } =
@@ -81,8 +82,35 @@ exports.createCourse = async (req, res) => {
   }
 };
 
+// show all course
+exports.showCourse = async (req, res) => {
+  try {
+    const AllCourses = await Course.find({},{
+      courseName:true,price:true,thumbnail:true, instructor:true,ratingAndReviews:true,studentsEnrolled:true
+    }).populate("instructor").exec();
 
+    if (!AllCourses) {
+      return res.status(404).json({
+        success: false,
+        message: "Course not found",
+      });
+    }
 
+    return res.status(200).json({
+      success: true,
+      message: "Course fetched successfully",
+      data: AllCourses,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+// show course by id
 exports.showCourse = async (req, res) => {
   try {
     const { id } = req.params; 
