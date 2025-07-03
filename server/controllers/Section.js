@@ -80,7 +80,7 @@ exports.deleteSection = async (req, res) => {
     if (!sectionId) {
       return res.status(400).json({
         success: false,
-        message: "Id are required",
+        message: "invalid id",
       });
     }
 
