@@ -1,12 +1,12 @@
 const Course = require("../models/Course");
 const User = require("../models/User");
-const Tag = require("../models/tags");
+const Category = require("../models/Category");
 const uploadImageToCloudinary = require("../utils/imageUploader");
 
 //Add course
 exports.createCourse = async (req, res) => {
   try {
-    const { courseName, courseDescription, whatYouWillLearn, price, tag } =
+    const { courseName, courseDescription, whatYouWillLearn, price, category } =
       req.body;
     const thumbnail = req.fills.thumbnailImage;
 
@@ -15,7 +15,7 @@ exports.createCourse = async (req, res) => {
       !courseDescription ||
       !whatYouWillLearn ||
       !price ||
-      !tag
+      !category
     ) {
       return res.status(400).json({
         success: false,
@@ -34,7 +34,7 @@ exports.createCourse = async (req, res) => {
       });
     }
 
-    const tagDetails = await Tag.findById({ tag });
+    const tagDetails = await Category.findById({ category});
     if (!tagDetails) {
       return req.status(404).json({
         success: false,
@@ -85,9 +85,19 @@ exports.createCourse = async (req, res) => {
 // show all course
 exports.showCourse = async (req, res) => {
   try {
-    const AllCourses = await Course.find({},{
-      courseName:true,price:true,thumbnail:true, instructor:true,ratingAndReviews:true,studentsEnrolled:true
-    }).populate("instructor").exec();
+    const AllCourses = await Course.find(
+      {},
+      {
+        courseName: true,
+        price: true,
+        thumbnail: true,
+        instructor: true,
+        ratingAndReviews: true,
+        studentsEnrolled: true,
+      }
+    )
+      .populate("instructor")
+      .exec();
 
     if (!AllCourses) {
       return res.status(404).json({
@@ -101,7 +111,6 @@ exports.showCourse = async (req, res) => {
       message: "Course fetched successfully",
       data: AllCourses,
     });
-
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -113,7 +122,7 @@ exports.showCourse = async (req, res) => {
 // show course by id
 exports.showCourse = async (req, res) => {
   try {
-    const { id } = req.params; 
+    const { id } = req.params;
 
     const course = await Course.findById(id);
 
@@ -129,7 +138,6 @@ exports.showCourse = async (req, res) => {
       message: "Course fetched successfully",
       data: course,
     });
-
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -138,4 +146,3 @@ exports.showCourse = async (req, res) => {
     });
   }
 };
-
