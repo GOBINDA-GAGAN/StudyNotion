@@ -2,6 +2,8 @@ const SubSection = require("../models/SubSection");
 const Section = require("../models/Section");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
 
+
+// create
 exports.createSubsection = async (req, res) => {
   try {
     const { title, description, sectionId, timeDuration } = req.body;
@@ -31,7 +33,7 @@ exports.createSubsection = async (req, res) => {
       _id:sectionId
     },{
       $push:{
-        subSection:newSubSection._id
+        SubSection:newSubSection._id
       }
     },{
       new:true
@@ -50,3 +52,7 @@ exports.createSubsection = async (req, res) => {
     });
   }
 };
+
+// update
+
+//delete
