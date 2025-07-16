@@ -2,7 +2,6 @@ const Profile = require("../models/Profile");
 const User = require("../models/User");
 
 //update  profile
-
 exports.updateProfile = async (req, res) => {
   try {
     const {
@@ -57,9 +56,29 @@ exports.deleteAccount = async (req, res) => {
       });
     }
 
-    await Profile.findByIdAndDelete({_id:userDetails.additionalDetails})
-    await User.findByIdAndDelete({_id:id})
+    await Profile.findByIdAndDelete({ _id: userDetails.additionalDetails });
+    await User.findByIdAndDelete({ _id: id });
 
+    //Todo delete the studentsEnrolled form  enrolled course
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error from updateProfile",
+      error: error.message,
+    });
+  }
+};
+
+exports.getUserDetails = async (req, res) => {
+  try {
+    const id = req.user.id;
+    const userDetails = await User.findById(id).populate("additionalDetails");
+
+    return res.status(200).json({
+      success: true,
+      message: "User Data fetched",
+      userDetails,
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
