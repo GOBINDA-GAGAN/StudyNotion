@@ -2,7 +2,6 @@ const SubSection = require("../models/SubSection");
 const Section = require("../models/Section");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
 
-
 // create
 exports.createSubsection = async (req, res) => {
   try {
@@ -29,20 +28,24 @@ exports.createSubsection = async (req, res) => {
       video: videoUrl.secure_url,
     });
 
-    const updateSection = await Section.findByIdAndUpdate({
-      _id:sectionId
-    },{
-      $push:{
-        SubSection:newSubSection._id
+    const updateSection = await Section.findByIdAndUpdate(
+      {
+        _id: sectionId,
+      },
+      {
+        $push: {
+          SubSection: newSubSection._id,
+        },
+      },
+      {
+        new: true,
       }
-    },{
-      new:true
-    })
+    );
 
     return res.status(200).json({
       success: true,
       message: "subSection  add successfully",
-      updateSection
+      updateSection,
     });
   } catch (error) {
     return res.status(500).json({
@@ -55,4 +58,21 @@ exports.createSubsection = async (req, res) => {
 
 // update
 
+exports.updateSubsection = async (req, res) => {};
+
 //delete
+exports.deleteSubsection = async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    return res.status(402).json({
+      message: "id not found",
+      status: false,
+    });
+  }
+  const deleteSubsection = await SubSection.findByIdAndDelete(id);
+  req.status(200).json({
+    status: true,
+    message: "Subsection delete successfully",
+    deleteSubsection,
+  });
+};

@@ -5,7 +5,6 @@ const bcrypt = require("bcryptjs");
 const Profile = require("../models/Profile");
 const Jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
-const { route, options } = require("../routes/User.routes");
 dotenv.config();
 
 //sendOTP
@@ -159,7 +158,6 @@ exports.signUp = async (req, res) => {
 };
 
 //Login
-
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
